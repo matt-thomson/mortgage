@@ -1,15 +1,12 @@
-mod create;
+use Mortgage;
 
-use hyper::server::Listening;
-use iron::error::HttpResult;
+use bodyparser::Struct;
+use iron::status;
 use iron::prelude::*;
-use router::Router;
 
-use std::net::Ipv4Addr;
+pub fn create(req: &mut Request) -> IronResult<Response> {
+    let mortgage = req.get::<Struct<Mortgage>>();
+    println!("{:#?}", mortgage);
 
-pub fn create(port: u16) -> HttpResult<Listening> {
-    let mut router = Router::new();
-    router.post("/mortgages", create::handle);
-
-    Iron::new(router).http((Ipv4Addr::new(127, 0, 0, 1), port))
+    Ok(Response::with((status::Ok, "hello, world")))
 }
