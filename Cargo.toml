@@ -2,3 +2,7 @@
 name = "mortgage"
 version = "0.1.0"
 authors = ["Matt Thomson <mattjohnthomson@gmail.com>"]
+
+[dependencies]
+iron = "*"
+router = "*"
