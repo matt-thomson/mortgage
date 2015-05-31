@@ -2,6 +2,7 @@
 name = "mortgage"
 version = "0.1.0"
 dependencies = [
+ "hyper 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "iron 0.1.18 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.0.10 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
