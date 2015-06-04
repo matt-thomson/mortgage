@@ -1,12 +1,15 @@
 mod body;
+mod json;
 mod stats;
 
+use self::json::StatsJson;
+
+use iron::headers::ContentType;
+use iron::modifiers::Header;
 use iron::status;
 use iron::prelude::*;
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
-    let result = req.get::<stats::Stats>();
-    println!("{:#?}", result);
-
-    Ok(Response::with(status::NoContent))
+    let json = try!(req.get::<StatsJson>().map_err(|e| e.to_iron()));
+    Ok(Response::with((status::Created, Header(ContentType::json()), json)))
 }

@@ -1,6 +1,13 @@
+use iron::error::IronError;
+use iron::status::Status;
+
+use std::error::Error as StdError;
+use std::fmt::{Display, Formatter, Result};
+
 #[derive(Debug)]
 enum MortgageErrorType {
-    InvalidBody
+    InvalidBody,
+    InternalError
 }
 
 #[derive(Debug)]
@@ -16,5 +23,25 @@ impl MortgageError {
 
     pub fn invalid_body(message: &str) -> MortgageError {
         MortgageError::new(MortgageErrorType::InvalidBody, message)
+    }
+
+    pub fn internal_error(message: &str) -> MortgageError {
+        MortgageError::new(MortgageErrorType::InternalError, message)
+    }
+
+    pub fn to_iron(self) -> IronError {
+        IronError::new(self, Status::InternalServerError)
+    }
+}
+
+impl StdError for MortgageError {
+    fn description(&self) -> &str {
+        &self.message[..]
+    }
+}
+
+impl Display for MortgageError {
+    fn fmt(&self, formatter: &mut Formatter) -> Result {
+        self.message.fmt(formatter)
     }
 }
