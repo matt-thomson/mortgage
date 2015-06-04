@@ -7,5 +7,6 @@ authors = ["Matt Thomson <mattjohnthomson@gmail.com>"]
 bodyparser = "*"
 iron = "*"
 num = "*"
+plugin = "*"
 router = "*"
 rustc-serialize = "*"

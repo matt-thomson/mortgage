@@ -5,6 +5,7 @@ dependencies = [
  "bodyparser 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "iron 0.1.18 (registry+https://github.com/rust-lang/crates.io-index)",
  "num 0.1.25 (registry+https://github.com/rust-lang/crates.io-index)",
+ "plugin 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.0.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.14 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

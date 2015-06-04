@@ -2,25 +2,25 @@
 pub struct Mortgage {
     amount: u32,
     num_years: usize,
-    apr: u32
+    apr: f32
 }
 
-#[derive(Debug, RustcEncodable)]
+#[derive(Clone, Debug, RustcEncodable)]
 pub struct MortgageStats {
     monthly_repayment: f32
 }
 
-#[derive(Debug, RustcEncodable)]
+#[derive(Clone, Debug, RustcEncodable)]
 pub struct MortgageWithStats {
     amount: u32,
     num_years: usize,
-    apr: u32,
+    apr: f32,
     stats: MortgageStats
 }
 
 impl Mortgage {
     pub fn new(amount: u32, num_years: usize, apr: f32) -> Mortgage {
-        Mortgage { amount: amount, num_years: num_years, apr: (apr * 100.0) as u32 }
+        Mortgage { amount: amount, num_years: num_years, apr: apr }
     }
 
     pub fn amount(&self) -> u32 {
@@ -32,7 +32,7 @@ impl Mortgage {
     }
 
     pub fn apr(&self) -> f32 {
-        self.apr as f32 / 100.0
+        self.apr
     }
 }
 
@@ -43,5 +43,16 @@ impl MortgageStats {
 
     pub fn monthly_repayment(&self) -> f32 {
         self.monthly_repayment
+    }
+}
+
+impl MortgageWithStats {
+    pub fn new(mortgage: &Mortgage, stats: MortgageStats) -> MortgageWithStats {
+        MortgageWithStats {
+            amount: mortgage.amount(),
+            num_years: mortgage.num_years(),
+            apr: mortgage.apr(),
+            stats: stats
+        }
     }
 }
