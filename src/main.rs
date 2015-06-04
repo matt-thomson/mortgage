@@ -1,12 +1,14 @@
 extern crate bodyparser;
 extern crate iron;
+extern crate num;
 extern crate router;
 extern crate rustc_serialize;
 
-mod mortgage;
+mod core;
+mod model;
 mod server;
 
-pub use mortgage::Mortgage;
+pub use model::{Mortgage, MortgageStats, MortgageWithStats};
 
 use iron::prelude::*;
 use router::Router;

@@ -8,5 +8,5 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let mortgage = req.get::<Struct<Mortgage>>();
     println!("{:#?}", mortgage);
 
-    Ok(Response::with((status::Ok, "hello, world")))
+    Ok(Response::with(status::NoContent))
 }
