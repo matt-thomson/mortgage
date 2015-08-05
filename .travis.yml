@@ -3,5 +3,14 @@ rust:
   - stable
   - beta
   - nightly
-before_script:
+
+install:
+  - npm install -g elm
+
+script:
   - cd server
+  - cargo build --verbose
+  - cargo test --verbose
+  - cd ../client
+  - elm package install -y
+  - elm make Mortgage.elm
