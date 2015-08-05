@@ -1,7 +1,9 @@
-module Mortgage where
+module Main where
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+
+import Components.Input as Input
 
 main: Html
 main =
