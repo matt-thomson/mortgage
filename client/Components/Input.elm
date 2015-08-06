@@ -2,7 +2,7 @@ module Components.Input where
 
 import Html exposing (Html, Attribute)
 import Html.Attributes
-import Helper exposing (..)
+import Html.Events
 import Signal exposing (Address)
 
 type alias State =
@@ -38,15 +38,23 @@ view address state =
         [ Html.text state.label ]
 
     inputField =
-      Html.input
-        [ Html.Attributes.id state.id
-        , Html.Attributes.class "form-control"
-        , Html.Attributes.type' "number"
-        , Html.Attributes.required True
-        , Html.Attributes.value state.value
-        , onInput address SetValue
-        ]
-        [ ]
+      let
+        onInput address =
+          let
+            toMessage address value =
+              Signal.message address (SetValue value)
+          in
+            Html.Events.on "input" Html.Events.targetValue (toMessage address)
+      in
+        Html.input
+          [ Html.Attributes.id state.id
+          , Html.Attributes.class "form-control"
+          , Html.Attributes.type' "number"
+          , Html.Attributes.required True
+          , Html.Attributes.value state.value
+          , onInput address
+          ]
+          [ ]
   in
     Html.div
       [ Html.Attributes.class "form-group" ]

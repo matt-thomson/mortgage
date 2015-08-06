@@ -2,8 +2,6 @@ module Components.Form where
 
 import Html exposing (Html, Attribute)
 import Html.Attributes
-import Html.Events
-import Helper exposing (..)
 import Signal exposing (Address)
 import List
 
@@ -23,9 +21,13 @@ type Action =
 
 update: Action -> State -> State
 update action state =
-  case action of
-    FieldAction n fieldAction ->
-      { state | fields <- updateN n (Input.update fieldAction) state.fields }
+  let
+    updateN n update list =
+      List.indexedMap (\index value -> if index == n then update value else value) list
+  in
+    case action of
+      FieldAction n fieldAction ->
+        { state | fields <- updateN n (Input.update fieldAction) state.fields }
 
 view: Address Action -> State -> Html
 view address state =
