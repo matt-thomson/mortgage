@@ -22,5 +22,5 @@ fn main() {
     let mut router = Router::new();
     router.post("/mortgages", server::create);
 
-    Iron::new(router).http((Ipv4Addr::new(127, 0, 0, 1), 3000)).unwrap();
+    Iron::new(router).http((Ipv4Addr::new(0, 0, 0, 0), 3000)).unwrap();
 }
