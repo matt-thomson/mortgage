@@ -1,4 +1,4 @@
-FROM jimmycuadra/rust:latest
+FROM quay.io/jimmycuadra/rust:latest
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
