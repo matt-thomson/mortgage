@@ -1,4 +1,4 @@
-FROM quay.io/jimmycuadra/rust:latest
+FROM quay.io/matt_thomson/mortgage-base:latest
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
