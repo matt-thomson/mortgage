@@ -1,3 +1,7 @@
+sudo: required
+services:
+  - docker
+
 language: rust
 rust:
   - stable
@@ -5,7 +9,9 @@ rust:
   - nightly
 
 install:
-  - npm install -g elm
+  - sudo apt-get update
+  - sudo apt-get install npm nodejs-legacy
+  - sudo npm install -g elm
 
 script:
   - cd server
@@ -13,4 +19,13 @@ script:
   - cargo test --verbose
   - cd ../client
   - elm package install -y
-  - elm make Main.elm
+  - elm make Main.elm --output=mortgage.js
+  - cd ..
+
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  [ $TRAVIS_RUST_VERSION = stable ] &&
+  docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASSWORD &&
+  docker build -t mattthomson/mortgage . &&
+  docker push mattthomson/mortgage
