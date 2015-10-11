@@ -13,7 +13,7 @@ mod model;
 mod server;
 
 pub use error::MortgageError;
-pub use model::{Mortgage, MortgageStats, MortgageWithStats};
+pub use model::{IntroductoryRate, Mortgage, MortgageStats, MortgageWithStats};
 
 use iron::prelude::*;
 use mount::Mount;
