@@ -32,5 +32,5 @@ fn main() {
     mount.mount("/", client);
     mount.mount("/mortgages", api);
 
-    Iron::new(mount).http((Ipv4Addr::new(127, 0, 0, 1), 3000)).unwrap();
+    Iron::new(mount).http((Ipv4Addr::new(0, 0, 0, 0), 3000)).unwrap();
 }
