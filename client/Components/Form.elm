@@ -27,7 +27,7 @@ update action state =
   in
     case action of
       FieldAction n fieldAction ->
-        { state | fields <- updateN n (Input.update fieldAction) state.fields }
+        { state | fields = updateN n (Input.update fieldAction) state.fields }
 
 view: Address Action -> State -> Html
 view address state =

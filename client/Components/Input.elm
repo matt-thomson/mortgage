@@ -25,7 +25,7 @@ update: Action -> State -> State
 update action state =
   case action of
     SetValue value ->
-      { state | value <- value }
+      { state | value = value }
 
 view: Address Action -> State -> Html
 view address state =
