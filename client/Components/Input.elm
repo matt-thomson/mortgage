@@ -1,41 +1,39 @@
 module Components.Input where
 
+import Effects exposing (Effects)
 import Html exposing (Html, Attribute)
 import Html.Attributes
 import Html.Events
 import Signal exposing (Address)
 
-type alias State =
+type alias Model =
   { id : String
   , label : String
   , value : String
   }
 
-init: String -> String -> State
-init id label =
-  { id = id
-  , label = label
-  , value = ""
-  }
+init: (String, String) -> (Model, Effects Action)
+init (id, label) =
+  (Model id label "", Effects.none)
 
 type Action =
   SetValue String
 
-update: Action -> State -> State
-update action state =
+update: Action -> Model -> (Model, Effects Action)
+update action model =
   case action of
     SetValue value ->
-      { state | value = value }
+      ({ model | value = value }, Effects.none)
 
-view: Address Action -> State -> Html
-view address state =
+view: Address Action -> Model -> Html
+view address model =
   let
     inputLabel =
       Html.label
-        [ Html.Attributes.for state.id
+        [ Html.Attributes.for model.id
         , Html.Attributes.class "col-sm-4 control-label"
         ]
-        [ Html.text state.label ]
+        [ Html.text model.label ]
 
     inputField =
       let
@@ -47,11 +45,11 @@ view address state =
             Html.Events.on "input" Html.Events.targetValue (toMessage address)
       in
         Html.input
-          [ Html.Attributes.id state.id
+          [ Html.Attributes.id model.id
           , Html.Attributes.class "form-control"
           , Html.Attributes.type' "number"
           , Html.Attributes.required True
-          , Html.Attributes.value state.value
+          , Html.Attributes.value model.value
           , onInput address
           ]
           [ ]

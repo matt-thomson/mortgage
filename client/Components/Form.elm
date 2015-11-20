@@ -1,5 +1,6 @@
 module Components.Form where
 
+import Effects exposing (Effects)
 import Html exposing (Html, Attribute)
 import Html.Attributes
 import Signal exposing (Address)
@@ -7,30 +8,54 @@ import List
 
 import Components.Input as Input
 
-type alias State =
-  { fields: List Input.State
+type alias Model =
+  { fields: List Input.Model
   }
 
-init: List Input.State -> State
+init: List (String, String) -> (Model, Effects Action)
 init fields =
-  { fields = fields
-  }
+  let
+    (inputs, inputsFx) =
+      fields
+      |> List.map Input.init
+      |> List.unzip
+
+    matchFx id fx =
+      Effects.map (FieldAction id) fx
+
+    fx =
+      inputsFx
+      |> List.indexedMap matchFx
+      |> Effects.batch
+  in
+    (Model inputs, fx)
 
 type Action =
   FieldAction Int Input.Action
 
-update: Action -> State -> State
-update action state =
-  let
-    updateN n update list =
-      List.indexedMap (\index value -> if index == n then update value else value) list
-  in
-    case action of
-      FieldAction n fieldAction ->
-        { state | fields = updateN n (Input.update fieldAction) state.fields }
+update: Action -> Model -> (Model, Effects Action)
+update action model =
+  case action of
+    FieldAction fieldId fieldAction ->
+      let
+        subUpdate id field =
+          if id == fieldId then
+            let
+              (newField, fx) = Input.update fieldAction field
+            in
+              (newField, Effects.map (FieldAction id) fx)
+          else
+            (field, Effects.none)
 
-view: Address Action -> State -> Html
-view address state =
+        (newFields, fxList) =
+          model.fields
+            |> List.indexedMap subUpdate
+            |> List.unzip
+      in
+        ({ model | fields = newFields }, Effects.batch fxList)
+
+view: Address Action -> Model -> Html
+view address model =
   let
     viewN index field =
       let fieldAddress =
@@ -40,4 +65,4 @@ view address state =
   in
     Html.form
       [ Html.Attributes.class "form-horizontal" ]
-      ( List.indexedMap viewN state.fields )
+      ( List.indexedMap viewN model.fields )
