@@ -7,10 +7,11 @@ import Signal exposing (Address)
 import StartApp exposing(App)
 
 import Components.Form as Form
-import Components.Input as Input
+import Components.Submit as Submit
 
 type alias Model =
   { form: Form.Model
+  , submit: Submit.Model
   }
 
 init: (Model, Effects Action)
@@ -24,11 +25,21 @@ init =
 
     (form, formFx) =
       Form.init fields
+
+    (submit, submitFx) =
+      Submit.init
+
+    fx =
+      Effects.batch
+        [ Effects.map FormAction formFx
+        , Effects.map SubmitAction submitFx
+        ]
   in
-    (Model form, Effects.map FormAction formFx)
+    (Model form submit, fx)
 
 type Action
   = FormAction Form.Action
+  | SubmitAction Submit.Action
 
 update: Action -> Model -> (Model, Effects Action)
 update action model =
@@ -39,16 +50,25 @@ update action model =
       in
         ({ model | form = newForm }, Effects.map FormAction fx)
 
+    SubmitAction submitAction ->
+      let
+        (newSubmit, fx) = Submit.update submitAction model.submit
+      in
+        ({ model | submit = newSubmit }, Effects.map SubmitAction fx)
+
 view: Address Action -> Model -> Html
 view address model =
   let
     formAddress =
       Signal.forwardTo address FormAction
+    submitAddress =
+      Signal.forwardTo address SubmitAction
   in
     Html.div
       [ Html.Attributes.class "container" ]
       [ Html.h1 [] [ Html.text "Mortgage Calculator" ]
       , Form.view formAddress model.form
+      , Submit.view submitAddress model.submit
       ]
 
 app : App Model

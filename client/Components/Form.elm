@@ -7,11 +7,9 @@ import Signal exposing (Address)
 import List
 
 import Components.Input as Input
-import Components.Submit as Submit
 
 type alias Model =
   { inputs: List Input.Model
-  , submit: Submit.Model
   }
 
 init: List (String, String) -> (Model, Effects Action)
@@ -25,26 +23,16 @@ init fields =
     matchFx id fx =
       Effects.map (FieldAction id) fx
 
-    (submit, submitFx) =
-      Submit.init
-
-    allInputsFx =
+    fx =
       inputsFx
       |> List.indexedMap matchFx
       |> Effects.batch
 
-    fx =
-      Effects.batch
-        [ allInputsFx
-        , Effects.map SubmitAction submitFx
-        ]
-
   in
-    (Model inputs submit, fx)
+    (Model inputs, fx)
 
 type Action =
   FieldAction Int Input.Action
-  | SubmitAction Submit.Action
 
 update: Action -> Model -> (Model, Effects Action)
 update action model =
@@ -67,13 +55,6 @@ update action model =
       in
         ({ model | inputs = newInputs }, Effects.batch fxList)
 
-    SubmitAction submitAction ->
-      let
-        (newSubmit, fx) =
-          Submit.update submitAction model.submit
-      in
-        ({ model | submit = newSubmit}, Effects.map SubmitAction fx)
-
 view: Address Action -> Model -> Html
 view address model =
   let
@@ -83,15 +64,7 @@ view address model =
       in
         Input.view fieldAddress field
 
-    inputs =
-      List.indexedMap viewN model.inputs
-
-    submit =
-      let submitAddress =
-        Signal.forwardTo address SubmitAction
-      in
-        Submit.view submitAddress model.submit
   in
     Html.form
       [ Html.Attributes.class "form-horizontal" ]
-      ( inputs ++ [submit] )
+      ( List.indexedMap viewN model.inputs )
