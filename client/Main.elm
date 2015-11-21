@@ -29,7 +29,6 @@ init =
 
 type Action
   = FormAction Form.Action
-  | NoOp
 
 update: Action -> Model -> (Model, Effects Action)
 update action model =
@@ -39,8 +38,6 @@ update action model =
         (newForm, fx) = Form.update formAction model.form
       in
         ({ model | form = newForm }, Effects.map FormAction fx)
-    NoOp ->
-      (model, Effects.none)
 
 view: Address Action -> Model -> Html
 view address model =
