@@ -12,9 +12,15 @@ type alias Model =
   { inputs: List Input.Model
   }
 
-init: List (String, String) -> (Model, Effects Action)
-init fields =
+init: (Model, Effects Action)
+init =
   let
+    fields =
+      [ ("amount", "Amount")
+      , ("num_years", "Number of years")
+      , ("apr", "APR (%)")
+      ]
+
     (inputs, inputsFx) =
       fields
       |> List.map Input.init

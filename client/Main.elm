@@ -17,14 +17,8 @@ type alias Model =
 init: (Model, Effects Action)
 init =
   let
-    fields =
-      [ ("amount", "Amount")
-      , ("num_years", "Number of years")
-      , ("apr", "APR (%)")
-      ]
-
     (form, formFx) =
-      Form.init fields
+      Form.init
 
     (submit, submitFx) =
       Submit.init
