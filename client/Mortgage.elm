@@ -1,16 +1,20 @@
 module Mortgage where
 
+import Api
 import Effects exposing (Effects)
 import Html exposing (Html, Attribute)
 import Html.Attributes
 import Html.Events
 import Signal exposing (Address)
 import StartApp exposing (App)
+import String
+import Task
 
 type alias Model
   = { amount: String
     , numYears: String
     , apr: String
+    , response: Result String Api.Response
     }
 
 type Action
@@ -18,6 +22,7 @@ type Action
   | UpdateNumYears String
   | UpdateApr String
   | Submit
+  | HandleResponse (Result String Api.Response)
 
 init: (Model, Effects Action)
 init =
@@ -26,21 +31,37 @@ init =
       { amount = ""
       , numYears = ""
       , apr = ""
+      , response = Err ""
       }
   in
     (model, Effects.none)
 
+request: Model -> Result String Api.Request
+request model =
+  (String.toInt model.amount
+    `Result.andThen` \amount -> String.toInt model.numYears
+    `Result.andThen` \numYears -> String.toFloat model.apr
+    |> Result.map (\apr -> { amount = amount, num_years = numYears, apr = apr }))
+
 update: Action -> Model -> (Model, Effects Action)
 update action model =
-  case action of
-    UpdateAmount amount ->
-      ({ model | amount = amount }, Effects.none)
-    UpdateNumYears numYears ->
-      ({ model | numYears = numYears }, Effects.none)
-    UpdateApr apr ->
-      ({ model | apr = apr }, Effects.none)
-    Submit ->
-      (model, Effects.none)
+  let
+    fetchStats =
+      Task.fromResult (request model) `Task.andThen` Api.getStats
+        |> Task.toResult
+        |> Task.map HandleResponse
+  in
+    case action of
+      UpdateAmount amount ->
+        ({ model | amount = amount }, Effects.none)
+      UpdateNumYears numYears ->
+        ({ model | numYears = numYears }, Effects.none)
+      UpdateApr apr ->
+        ({ model | apr = apr }, Effects.none)
+      Submit ->
+        (model, Effects.task fetchStats)
+      HandleResponse response ->
+        ({ model | response = response }, Effects.none)
 
 view: Address Action -> Model -> Html
 view address model =
@@ -104,12 +125,32 @@ view address model =
           [ button ]
         ]
 
+    responseText =
+      case model.response of
+        Ok response ->
+          let
+            round x = (x * 100 |> floor |> toFloat) / 100.0
+            monthlyRepayment = round response.stats.monthly_repayment
+          in
+            (String.append "Monthly repayment: £" (toString monthlyRepayment))
+        Err err ->
+          err
+
+    responseView =
+      Html.div
+        [ Html.Attributes.class "row" ]
+        [ Html.div
+          [ Html.Attributes.class "col-sm-offset-4 col-sm-8" ]
+          [ Html.strong [] [ Html.text responseText ] ]
+        ]
+
   in
     Html.div
       [ Html.Attributes.class "container" ]
       [ Html.h1 [] [ Html.text "Mortgage Calculator" ]
       , formView
       , submitView
+      , responseView
       ]
 
 app : App Model
@@ -117,3 +158,7 @@ app = StartApp.start { init = init, view = view, update = update, inputs = [] }
 
 main : Signal Html
 main = app.html
+
+port tasks : Signal (Task.Task Effects.Never ())
+port tasks =
+    app.tasks

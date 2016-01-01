@@ -17,7 +17,7 @@ type alias Response
 type alias Stats
   = { monthly_repayment: Float }
 
-getStats : Request -> Task Http.Error Response
+getStats : Request -> Task String Response
 getStats request =
   let
     decodeStats =
@@ -36,3 +36,4 @@ getStats request =
       Http.string (Json.Encode.encode 0 encodedRequest)
   in
     Http.post decodeResponse "/mortgages" body
+    |> Task.mapError toString
