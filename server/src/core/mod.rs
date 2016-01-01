@@ -13,12 +13,11 @@ pub fn calculate_stats(mortgage: &Mortgage) -> MortgageStats {
 
 #[cfg(test)]
 mod tests {
-    use {IntroductoryRate, Mortgage};
+    use Mortgage;
 
     #[test]
     fn should_calculate_monthly_repayment() {
-        let introductory_rate = IntroductoryRate::new(5, 4.59);
-        let mortgage = Mortgage::new(250000, 20, 3.99, Some(introductory_rate));
+        let mortgage = Mortgage::new(250000, 20, 3.99);
         let stats = super::calculate_stats(&mortgage);
 
         assert_eq!(stats.monthly_repayment() as u32, 1513);
