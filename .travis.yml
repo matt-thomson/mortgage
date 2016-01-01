@@ -19,7 +19,7 @@ script:
   - cargo test --verbose
   - cd ../client
   - elm package install -y
-  - elm make Main.elm --output=mortgage.js
+  - elm make Mortgage.elm --output=mortgage.js
   - cd ..
 
 after_success: |
