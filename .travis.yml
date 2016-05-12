@@ -11,7 +11,7 @@ rust:
 install:
   - sudo apt-get update
   - sudo apt-get install -y npm nodejs-legacy
-  - sudo npm install -g elm@0.16.0
+  - sudo npm install -g elm@0.17.0
 
 script:
   - cd server
